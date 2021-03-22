@@ -227,7 +227,7 @@ contract Lottery is OwnableUpgradeable {
         require(!drawingPhase, 'drawing, can not buy now');
         require (_price >= minPrice, 'price must above minPrice');
         uint256 tokenId = _buySingleTicket(_price, _numbers);
-        egg.safeTransferFrom(address(msg.sender), address(this), _price);
+        kst.safeTransferFrom(address(msg.sender), address(this), _price);
         emit Buy(msg.sender, tokenId);
     }
 
@@ -239,7 +239,7 @@ contract Lottery is OwnableUpgradeable {
             _buySingleTicket(_price, _numbers[i]);
             totalPrice = totalPrice.add(_price);
         }
-        egg.safeTransferFrom(address(msg.sender), address(this), totalPrice);
+        kst.safeTransferFrom(address(msg.sender), address(this), totalPrice);
         emit MultiBuy(msg.sender, totalPrice);
     }
 
@@ -266,7 +266,7 @@ contract Lottery is OwnableUpgradeable {
         }
         lotteryNFT.multiClaimReward(_tickets);
         if(totalReward>0) {
-            safeEggTransfer(address(msg.sender), totalReward);
+            safeKstTransfer(address(msg.sender), totalReward);
         }
         emit MultiClaim(msg.sender, totalReward);
     }
@@ -355,7 +355,7 @@ contract Lottery is OwnableUpgradeable {
     }
 
     // Safe kst transfer function, just in case if rounding error causes pool to not have enough KSTs.
-    function safeEggTransfer(address _to, uint256 _amount) internal {
+    function safeKstTransfer(address _to, uint256 _amount) internal {
         uint256 kstBal = kst.balanceOf(address(this));
         if (_amount > kstBal) {
             kst.transfer(_to, kstBal);
